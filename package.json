@@ -8,6 +8,7 @@
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
     "build:mac": "node .electron-vue/build.js && electron-builder -m",
+    "build:win32": "node .electron-vue/build.js && electron-builder --ia32 -w",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
@@ -62,7 +63,7 @@
   "dependencies": {
     "adm-zip": "^0.4.13",
     "axios": "^0.18.0",
-    "electron-asar-hot-updater": "^0.0.4",
+    "electron-asar-hot-updater": "^0.0.5",
     "electron-progressbar": "^1.2.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
