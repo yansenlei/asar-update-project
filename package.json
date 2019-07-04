@@ -33,7 +33,14 @@
       "output": "build"
     },
     "files": [
-      "dist/electron/**/*"
+      "dist/electron/**/*",
+      {
+        "from": "node_modules/electron-asar-hot-updater/",
+        "to": "./node_modules/electron-asar-hot-updater",
+        "filter": [
+          "**/*"
+        ]
+      }
     ],
     "dmg": {
       "contents": [
@@ -63,7 +70,7 @@
   "dependencies": {
     "adm-zip": "^0.4.13",
     "axios": "^0.18.0",
-    "electron-asar-hot-updater": "^0.0.5",
+    "electron-asar-hot-updater": "^0.1.0",
     "electron-progressbar": "^1.2.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
