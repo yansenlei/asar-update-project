@@ -2,6 +2,7 @@
 
 import { app, BrowserWindow, dialog } from 'electron'
 const EAU = require('electron-asar-hot-updater')
+const ProgressBar = require('electron-progressbar')
 
 /**
  * Set `__static` path to static files in production
@@ -13,7 +14,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
+  ? `http://localhost:9088`
   : `file://${__dirname}/index.html`
 
 function createWindow () {
@@ -23,7 +24,11 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      nativeWindowOpen: true,
+      nodeIntegration: true
+    }
   })
 
   mainWindow.loadURL(winURL)
@@ -52,11 +57,40 @@ function createWindow () {
     }, (callIndex) => {
       switch (callIndex) {
         case 0:
+          var progressBar = new ProgressBar({
+            indeterminate: false,
+            text: 'Preparing data...',
+            detail: 'Wait...',
+            style: {
+              bar: { 'background-color': '#fff', 'height': '10px' },
+              value: { 'background-color': '#2CD3A9', 'height': '10px' }
+            },
+            browserWindow: {
+              parent: mainWindow
+            }
+          })
+
+          progressBar
+            .on('completed', function () {
+              console.info('completed...')
+              progressBar.detail = 'Task completed. Exiting...'
+            })
+            .on('aborted', function (value) {
+              console.info(`aborted... ${value}`)
+            })
+            .on('progress', function (value) {
+              progressBar.detail = `Value ${value} out of ${progressBar.getOptions().maxValue}...`
+            })
+
           EAU.progress(function (state) {
-            console.log(state)
+            if (!progressBar.isCompleted()) {
+              progressBar.value = parseInt(100 * state.percent)
+            }
           })
 
           EAU.download(function (error) {
+            progressBar.value = 100
+            progressBar.close()
             if (error) {
               dialog.showErrorBox('error', error)
               return false
